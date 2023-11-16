@@ -15,15 +15,14 @@ struct ContentView: View {
                 // 그리드 구성
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
                     ForEach(0..<5, id: \.self) { index in
-                        // 각 셀을 NavigationLink로 래핑
                         NavigationLink(destination: DetailView(itemIndex: index)) {
                             VStack {
-                                // 셀 내용: 이미지와 레이블
                                 Image(systemName: "photo")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(height: 100)
                                 Text("Item \(index)")
+                                    .font(.custom("Inter-Bold", size: 40))
                             }
                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 150)
                             .background(Color.white)
@@ -34,6 +33,14 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle("My Lists")
+        }
+        .onAppear {
+            // 폰트 목록 출력
+            for fontFamily in UIFont.familyNames {
+                for fontName in UIFont.fontNames(forFamilyName: fontFamily) {
+                    print(fontName)
+                }
+            }
         }
     }
 }
@@ -47,7 +54,6 @@ struct DetailView: View {
     }
 }
 
-// Color 확장
 extension Color {
     static let CustomBlue = Color("CustomBlue")
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string></string>
+	</array>
+	<key>Inter-Regular.ttf</key>
+	<string></string>
+	<key>Inter-Thin.ttf</key>
+	<string></string>
+	<key>Inter-SemiBold.ttf</key>
+	<string></string>
+	<key>Inter-Medium.ttf</key>
+	<string></string>
+	<key>Inter-Light.ttf</key>
+	<string></string>
+	<key>Inter-Black.ttf</key>
+	<string></string>
+	<key>Inter-ExtraLight.ttf</key>
+	<string></string>
+	<key>Inter-ExtraBold.ttf</key>
+	<string></string>
+	<key>Inter-Bold.ttf</key>
+	<string></string>
+</dict>
+</plist>
