@@ -20,6 +20,7 @@
 		78BC9B9E2B05EC8400CD8C2E /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78BC9B952B05EC8300CD8C2E /* Inter-SemiBold.ttf */; };
 		78BC9B9F2B05EC8400CD8C2E /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78BC9B962B05EC8300CD8C2E /* Inter-Regular.ttf */; };
 		78BC9BA02B05EC8400CD8C2E /* Inter-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 78BC9B972B05EC8300CD8C2E /* Inter-ExtraBold.ttf */; };
+		78FDBA2F2B05FF8F0044D91C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78FDBA2E2B05FF8F0044D91C /* Model.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		78BC9B962B05EC8300CD8C2E /* Inter-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Regular.ttf"; sourceTree = "<group>"; };
 		78BC9B972B05EC8300CD8C2E /* Inter-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-ExtraBold.ttf"; sourceTree = "<group>"; };
 		78BC9BA12B05F15300CD8C2E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		78FDBA2E2B05FF8F0044D91C /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 		788898052AF366DA0074A293 = {
 			isa = PBXGroup;
 			children = (
+				78FDBA2D2B05FF7E0044D91C /* Model */,
 				788898102AF366DA0074A293 /* waffle-bibs */,
 				7888980F2AF366DA0074A293 /* Products */,
 			);
@@ -102,6 +105,15 @@
 				78BC9B932B05EC8300CD8C2E /* Inter-Thin.ttf */,
 			);
 			path = Font;
+			sourceTree = "<group>";
+		};
+		78FDBA2D2B05FF7E0044D91C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				78FDBA2E2B05FF8F0044D91C /* Model.swift */,
+			);
+			name = Model;
+			path = "ㅡㅐㅇ디";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -183,6 +195,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78FDBA2F2B05FF8F0044D91C /* Model.swift in Sources */,
 				788898142AF366DA0074A293 /* ContentView.swift in Sources */,
 				788898122AF366DA0074A293 /* waffle_bibsApp.swift in Sources */,
 			);

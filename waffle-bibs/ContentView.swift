@@ -7,6 +7,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    let gridItems = [
+        GridItemModel(imageName: "assiegment", labelText: "Aassignment"),
+        GridItemModel(imageName: "workOut", labelText: "work out"),
+        GridItemModel(imageName: "photo", labelText: "D"),
+        GridItemModel(imageName: "photo", labelText: "Item 4")
+        // 여기에 추가적인 아이템을 정의할 수 있습니다.
+    ]
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -14,14 +22,15 @@ struct ContentView: View {
                 Color.CustomBlue
                 // 그리드 구성
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                    ForEach(0..<5, id: \.self) { index in
+                    ForEach(gridItems.indices, id: \.self) { index in
+                        let item = gridItems[index]
                         NavigationLink(destination: DetailView(itemIndex: index)) {
                             VStack {
-                                Image(systemName: "photo")
+                                Image(systemName: item.imageName)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(height: 100)
-                                Text("Item \(index)")
+                                Text(item.labelText)
                                     .font(.custom("Inter-Bold", size: 40))
                             }
                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 150)
@@ -47,7 +56,7 @@ struct ContentView: View {
 
 struct DetailView: View {
     var itemIndex: Int
-
+    
     var body: some View {
         Text("Detail View for Item \(itemIndex)")
             .navigationTitle("Detail")
