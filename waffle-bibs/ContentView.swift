@@ -10,11 +10,12 @@ struct ContentView: View {
     let gridItems = [
         GridItemModel(imageName: "assiegment", labelText: "Aassignment"),
         GridItemModel(imageName: "workOut", labelText: "work out"),
-        GridItemModel(imageName: "photo", labelText: "D"),
-        GridItemModel(imageName: "photo", labelText: "Item 4")
+        GridItemModel(imageName: "Daily", labelText: "Daily"),
+        GridItemModel(imageName: "meet", labelText: "meet")
         // 여기에 추가적인 아이템을 정의할 수 있습니다.
     ]
     
+   
     var body: some View {
         NavigationStack {
             ZStack {
@@ -26,12 +27,13 @@ struct ContentView: View {
                         let item = gridItems[index]
                         NavigationLink(destination: DetailView(itemIndex: index)) {
                             VStack {
-                                Image(systemName: item.imageName)
+                                // 사용자 정의 이미지 로드
+                                Image(item.imageName)
                                     .resizable()
                                     .scaledToFit()
                                     .frame(height: 100)
                                 Text(item.labelText)
-                                    .font(.custom("Inter-Bold", size: 40))
+                                    .font(.custom("Inter-Bold", size: 12))
                             }
                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 150)
                             .background(Color.white)
@@ -42,14 +44,6 @@ struct ContentView: View {
                 .padding()
             }
             .navigationTitle("My Lists")
-        }
-        .onAppear {
-            // 폰트 목록 출력
-            for fontFamily in UIFont.familyNames {
-                for fontName in UIFont.fontNames(forFamilyName: fontFamily) {
-                    print(fontName)
-                }
-            }
         }
     }
 }
