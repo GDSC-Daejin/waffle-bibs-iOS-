@@ -6,42 +6,49 @@
 //
 import SwiftUI
 
+
 struct ContentView: View {
+    
     let gridItems = [
-        GridItemModel(imageName: "assiegment", labelText: "Aassignment"),
+        GridItemModel(imageName: "assiment", labelText: "Aassignment"),
         GridItemModel(imageName: "workOut", labelText: "work out"),
         GridItemModel(imageName: "Daily", labelText: "Daily"),
         GridItemModel(imageName: "meet", labelText: "meet")
-        // 여기에 추가적인 아이템을 정의할 수 있습니다.
     ]
     
-   
+    
     var body: some View {
         NavigationStack {
             ZStack {
                 // 배경색 설정
                 Color.CustomBlue
                 // 그리드 구성
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                    ForEach(gridItems.indices, id: \.self) { index in
-                        let item = gridItems[index]
-                        NavigationLink(destination: DetailView(itemIndex: index)) {
-                            VStack {
-                                // 사용자 정의 이미지 로드
-                                Image(item.imageName)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: 100)
-                                Text(item.labelText)
-                                    .font(.custom("Inter-Bold", size: 12))
+                LazyVGrid(columns: [
+                    GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]) {
+                        
+                        ForEach(gridItems.indices, id: \.self) { index in
+                            let item = gridItems[index]
+                            NavigationLink(destination: DetailView(itemIndex: index)) {
+                                VStack {
+                                    
+                                    // 사용자 정의 이미지 로드
+                                    Image(item.imageName)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 48, height: 48)
+                                        .clipped()
+                                    
+                                    Text(item.labelText)
+                                        .font(.custom("Inter-Bold", size: 14))
+                                }
+                                .frame(width: 152, height: 148, alignment: .center)
+                                
+                                .background(Color.white)
+                                .cornerRadius(10)
                             }
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 150)
-                            .background(Color.white)
-                            .cornerRadius(10)
                         }
                     }
-                }
-                .padding()
+                    .padding(40)
             }
             .navigationTitle("My Lists")
         }
