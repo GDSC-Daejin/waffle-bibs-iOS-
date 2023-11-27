@@ -28,7 +28,8 @@ struct ContentView: View {
                         
                         ForEach(gridItems.indices, id: \.self) { index in
                             let item = gridItems[index]
-                            NavigationLink(destination: DetailView(itemIndex: index)) {
+                            NavigationLink(destination: DetailView(itemIndex: index, gridItems: gridItems)) {
+
                                 VStack {
                                     
                                     // 사용자 정의 이미지 로드
@@ -57,12 +58,25 @@ struct ContentView: View {
 
 struct DetailView: View {
     var itemIndex: Int
+    let gridItems: [GridItemModel] // gridItems 배열을 추가
+
+    init(itemIndex: Int, gridItems: [GridItemModel]) {
+        self.itemIndex = itemIndex
+        self.gridItems = gridItems
+    }
     
     var body: some View {
-        Text("Detail View for Item \(itemIndex)")
-            .navigationTitle("Detail")
+        switch itemIndex {
+        case 0:
+            AssimentView(data: gridItems[itemIndex]) // 필요한 데이터를 전달
+        // 다른 인덱스에 대한 뷰를 여기에 추가
+        default:
+            Text("Detail View for Item \(itemIndex)")
+        }
     }
 }
+
+
 
 extension Color {
     static let CustomBlue = Color("CustomBlue")
