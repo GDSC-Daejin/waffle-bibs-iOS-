@@ -5,34 +5,23 @@
 //  Created by 이지훈 on 2023/11/02.
 //
 import SwiftUI
-
+import Alamofire
 
 struct ContentView: View {
-    
-    let gridItems = [
-        GridItemModel(imageName: "assiment", labelText: "Aassignment"),
-        GridItemModel(imageName: "workOut", labelText: "work out"),
-        GridItemModel(imageName: "Daily", labelText: "Daily"),
-        GridItemModel(imageName: "meet", labelText: "meet")
-    ]
-    
-    
+    @State private var gridItems: [GridItemModel] = []
+
     var body: some View {
         NavigationStack {
             ZStack {
-                // 배경색 설정
                 Color.CustomBlue
-                // 그리드 구성
-                LazyVGrid(columns: [
-                    GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]) {
-                        
+                if gridItems.isEmpty {
+                    Text("Loading...")
+                } else {
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]) {
                         ForEach(gridItems.indices, id: \.self) { index in
                             let item = gridItems[index]
                             NavigationLink(destination: DetailView(itemIndex: index, gridItems: gridItems)) {
-
                                 VStack {
-                                    
-                                    // 사용자 정의 이미지 로드
                                     Image(item.imageName)
                                         .resizable()
                                         .aspectRatio(contentMode: .fill)
@@ -43,17 +32,33 @@ struct ContentView: View {
                                         .font(.custom("Inter-Bold", size: 14))
                                 }
                                 .frame(width: 152, height: 148, alignment: .center)
-                                
                                 .background(Color.white)
                                 .cornerRadius(10)
                             }
                         }
                     }
                     .padding(40)
+                }
             }
             .navigationTitle("My Lists")
         }
+        .onAppear {
+            fetchServerData()
+        }
     }
+
+    func fetchServerData() {
+        let url = "http://158.179.166.114:8080/"
+        AF.request(url, method: .get).responseDecodable(of: [CategoryModel].self) { response in
+            switch response.result {
+            case .success(let data):
+                self.gridItems = data.map { GridItemModel(imageName: $0.title.lowercased(), labelText: $0.title) }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+
 }
 
 struct DetailView: View {

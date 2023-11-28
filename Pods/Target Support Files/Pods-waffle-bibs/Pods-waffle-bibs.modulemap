@@ -1,0 +1,6 @@
+framework module Pods_waffle_bibs {
+  umbrella header "Pods-waffle-bibs-umbrella.h"
+
+  export *
+  module * { export * }
+}

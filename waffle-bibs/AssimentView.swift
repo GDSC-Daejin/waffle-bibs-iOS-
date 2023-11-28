@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 struct AssimentView: View {
     var data: GridItemModel
 
