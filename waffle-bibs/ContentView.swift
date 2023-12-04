@@ -14,9 +14,7 @@ struct ContentView: View {
         NavigationStack {
             ZStack {
                 Color.CustomBlue
-                if gridItems.isEmpty {
-                    Text("Loading...")
-                } else {
+               
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]) {
                         ForEach(gridItems.indices, id: \.self) { index in
                             let item = gridItems[index]
@@ -38,28 +36,31 @@ struct ContentView: View {
                         }
                     }
                     .padding(40)
+                } .onAppear {
+                    fetchServerData()
                 }
             }
             .navigationTitle("My Lists")
         }
-        .onAppear {
-            fetchServerData()
-        }
+       
     }
 
     func fetchServerData() {
         let url = "http://158.179.166.114:8080/"
         AF.request(url, method: .get).responseDecodable(of: [CategoryModel].self) { response in
-            switch response.result {
-            case .success(let data):
-                self.gridItems = data.map { GridItemModel(imageName: $0.title.lowercased(), labelText: $0.title) }
-            case .failure(let error):
-                print(error)
+            DispatchQueue.main.async { // 메인 스레드에서 UI 업데이트
+                switch response.result {
+                case .success(let data):
+                    self.gridItems = data.map { GridItemModel(imageName: $0.title.lowercased(), labelText: $0.title) }
+                case .failure(let error):
+                    print(error)
+                }
             }
         }
     }
 
-}
+
+
 
 struct DetailView: View {
     var itemIndex: Int
@@ -74,6 +75,7 @@ struct DetailView: View {
         switch itemIndex {
         case 0:
             AssimentView(data: gridItems[itemIndex]) // 필요한 데이터를 전달
+            
         // 다른 인덱스에 대한 뷰를 여기에 추가
         default:
             Text("Detail View for Item \(itemIndex)")
