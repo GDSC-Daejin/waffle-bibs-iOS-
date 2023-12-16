@@ -9,56 +9,57 @@ import Alamofire
 
 struct ContentView: View {
     @State private var gridItems: [GridItemModel] = []
-
+    
     var body: some View {
+        
         NavigationStack {
             ZStack {
                 Color.CustomBlue
-               
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]) {
-                        ForEach(gridItems.indices, id: \.self) { index in
-                            let item = gridItems[index]
-                            NavigationLink(destination: DetailView(itemIndex: index, gridItems: gridItems)) {
-                                VStack {
-                                    Image(item.imageName)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 48, height: 48)
-                                        .clipped()
-                                    
-                                    Text(item.labelText)
-                                        .font(.custom("Inter-Bold", size: 14))
-                                }
-                                .frame(width: 152, height: 148, alignment: .center)
-                                .background(Color.white)
-                                .cornerRadius(10)
+                
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 11), GridItem(.flexible(), spacing: 11)]) {
+                    ForEach(gridItems.indices, id: \.self) { index in
+                        let item = gridItems[index]
+                        NavigationLink(destination: DetailView(itemIndex: index, gridItems: gridItems)) {
+                            VStack {
+                                Image(item.imageName)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 48, height: 48)
+                                    .clipped()
+                                
+                                Text(item.labelText)
+                                    .font(.custom("Inter-Bold", size: 14))
                             }
+                            .frame(width: 152, height: 148, alignment: .center)
+                            .background(Color.white)
+                            .cornerRadius(10)
                         }
                     }
-                    .padding(40)
-                } .onAppear {
-                    fetchServerData()
                 }
+                .padding(40)
+            } .onAppear {
+                fetchServerData()
             }
-            .navigationTitle("My Lists")
         }
-       
+        .navigationTitle("My Lists")
     }
-
+    
+    
     func fetchServerData() {
         let url = "http://158.179.166.114:8080/"
         AF.request(url, method: .get).responseDecodable(of: [CategoryModel].self) { response in
-            DispatchQueue.main.async { // 메인 스레드에서 UI 업데이트
+            DispatchQueue.main.async {
                 switch response.result {
                 case .success(let data):
-                    self.gridItems = data.map { GridItemModel(imageName: $0.title.lowercased(), labelText: $0.title) }
+                    self?.gridItems = data.map { GridItemModel(imageName: $0.title.lowercased(), labelText: $0.title) }
                 case .failure(let error):
                     print(error)
                 }
             }
         }
     }
-
+    
+}
 
 
 
