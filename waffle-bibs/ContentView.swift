@@ -9,7 +9,7 @@ import Alamofire
 
 
 struct ContentView: View {
-    @StateObject var viewModel = GridItemViewModel()
+    @StateObject var viewModel = ContentViewViewModel()
 
     var body: some View {
         NavigationView {

@@ -3,7 +3,7 @@ import Foundation
 import Alamofire
 
 
-class GridItemViewModel: ObservableObject {
+class ContentViewViewModel: ObservableObject, Identifiable {
     @Published var gridItems: [CategoryModel] = []
 
     init() {
@@ -11,13 +11,13 @@ class GridItemViewModel: ObservableObject {
     }
 
     func fetchCategories() {
-        AF.request("http://158.179.166.114:8080/", method: .get).responseDecodable(of: [CategoryModel].self) { response in
-            switch response.result {
-            case .success(let categories):
-                self.gridItems = categories
-            case .failure(let error):
-                print(error)
-            }
-        }
+        // 서버에서 카테고리 데이터를 가져오는 로직을 구현
+        // 예시로 임시 데이터를 사용합니다.
+        gridItems = [
+            CategoryModel(title: "Assignment"),
+            CategoryModel(title: "Work Out"),
+            CategoryModel(title: "Daily"),
+            CategoryModel(title: "Meet")
+        ]
     }
 }
