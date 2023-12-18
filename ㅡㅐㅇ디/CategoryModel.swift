@@ -7,8 +7,10 @@
 
 import Foundation
 
-struct CategoryModel: Codable {
-    var id: Int
-    var title: String
+
+
+struct CategoryModel: Codable, Identifiable {
+    let id: UUID = UUID()  // 고유 ID 생성
+    let title: String
 }
 
