@@ -8,7 +8,9 @@
 import Foundation
 
 
-struct GridItemModel {
+struct GridItemModel: Identifiable {
+    
+    let id = UUID() // 고유 식별자 추가
     var imageName: String
     var labelText: String
 }

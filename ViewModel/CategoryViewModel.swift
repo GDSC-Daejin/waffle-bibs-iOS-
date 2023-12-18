@@ -2,22 +2,20 @@
 import Foundation
 import Alamofire
 
-
-class ContentViewViewModel: ObservableObject, Identifiable {
-    @Published var gridItems: [CategoryModel] = []
+class ContentViewViewModel: ObservableObject {
+    @Published var gridItems: [GridItemModel] = []
 
     init() {
-        fetchCategories()
+        fetchGridItems()
     }
 
-    func fetchCategories() {
-        // 서버에서 카테고리 데이터를 가져오는 로직을 구현
-        // 예시로 임시 데이터를 사용합니다.
+    func fetchGridItems() {
+        // 예시 데이터
         gridItems = [
-            CategoryModel(title: "Assignment"),
-            CategoryModel(title: "Work Out"),
-            CategoryModel(title: "Daily"),
-            CategoryModel(title: "Meet")
+            GridItemModel(imageName: "assiment", labelText: "Assignment"),
+            GridItemModel(imageName: "workOut", labelText: "Work Out"),
+            GridItemModel(imageName: "Daily", labelText: "Daily"),
+            GridItemModel(imageName: "meet", labelText: "Meet")
         ]
     }
 }

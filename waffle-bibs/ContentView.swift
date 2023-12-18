@@ -7,7 +7,6 @@
 import SwiftUI
 import Alamofire
 
-
 struct ContentView: View {
     @StateObject var viewModel = ContentViewViewModel()
 
@@ -17,14 +16,14 @@ struct ContentView: View {
                 Color.CustomBlue
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                     ForEach(viewModel.gridItems) { item in
-                        NavigationLink(destination: DetailView(category: item)) {
+                        NavigationLink(destination: DetailView(item: item)) {
                             VStack {
-                                Image(item.title.lowercased()) // 이미지 이름은 title 속성을 사용
+                                Image(item.imageName)
                                     .resizable()
                                     .aspectRatio(contentMode: .fill)
                                     .frame(width: 48, height: 48)
                                     .clipped()
-                                Text(item.title)
+                                Text(item.labelText)
                                     .font(.custom("Inter-Bold", size: 14))
                             }
                             .frame(width: 152, height: 148)
@@ -40,14 +39,17 @@ struct ContentView: View {
     }
 }
 
+
 struct DetailView: View {
-    var category: CategoryModel
+    var item: GridItemModel
 
     var body: some View {
-        Text("Detail View for \(category.title)")
-            .navigationTitle(category.title)
+        Text("Detail View for \(item.labelText)")
+            .navigationTitle(item.labelText)
     }
 }
+
+
 
 // Color extension 및 ContentView_Previews 유지
 
