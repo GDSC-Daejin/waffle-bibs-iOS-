@@ -16,7 +16,7 @@ struct ContentView: View {
                 Color.CustomBlue
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
                     ForEach(viewModel.gridItems) { item in
-                        NavigationLink(destination: DetailView(item: item)) {
+                        NavigationLink(destination: destinationView(item: item)) {
                             VStack {
                                 Image(item.imageName)
                                     .resizable()
@@ -37,18 +37,41 @@ struct ContentView: View {
             .navigationTitle("My Lists")
         }
     }
-}
 
-
-struct DetailView: View {
-    var item: GridItemModel
-
-    var body: some View {
-        Text("Detail View for \(item.labelText)")
-            .navigationTitle(item.labelText)
+    @ViewBuilder
+    private func destinationView(item: GridItemModel) -> some View {
+        
+        print(item.labelText) // 여기에 추가
+        return VStack {
+            
+            switch item.labelText {
+                
+            case "Assignment":
+                AssimentView(data: item)
+            case "Work Out":
+                WorkoutView()
+            case "Daily":
+                DailyView()
+            case "Meet":
+                MeetView()
+            default:
+                Text("Not Found")
+            }
+        }
     }
 }
-
+//
+//
+//
+//struct DetailView: View {
+//    var item: GridItemModel
+//
+//    var body: some View {
+//        Text("Detail View for \(item.labelText)")
+//            .navigationTitle(item.labelText)
+//    }
+//}
+//
 
 
 // Color extension 및 ContentView_Previews 유지
