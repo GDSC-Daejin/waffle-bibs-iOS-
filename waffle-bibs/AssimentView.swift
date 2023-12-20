@@ -7,14 +7,16 @@ import SwiftUI
 
 struct AssimentView: View {
     var data: GridItemModel
+    @Environment(\.presentationMode) var presentationMode // 환경 변수 추가
+    
     
     var body: some View {
         ZStack{
             VStack(alignment: .leading) {
                 HStack {// leading은 왼쪽 정렬을 의미합니다.
                     Button(action: {
-                        // 뒤로 가기 액션
-                    }) {
+                        self.presentationMode.wrappedValue.dismiss() // 뒤로 가기 기능
+                    })  {
                         Image("backBtn")
                             .resizable()
                             .frame(width: 20, height: 20)
@@ -22,8 +24,8 @@ struct AssimentView: View {
                     Text("Assiment")
                         .font(.custom("Inter", size: 30))
                         .bold()
-                       .foregroundColor(Color("CustomFont"))
-
+                        .foregroundColor(Color("CustomFont"))
+                    
                     Spacer()
                     
                     
