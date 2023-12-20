@@ -32,19 +32,30 @@ struct AssimentView: View {
                     Button(action: {
                         // 오른쪽 첫 번째 버튼 액션
                     }) {
-                        Image(systemName: "plus")
+                        Image("deleteBtn")
+                            .resizable()
+                            .frame(width: 30, height: 30)
                     }
-                    Button(action: {
-                        // 오른쪽 두 번째 버튼 액션
-                    }) {
-                        Image(systemName: "ellipsis")
+                        Button(action: {
+                        }) {
+                            ZStack {
+                                   Image("addBack")
+                                       .resizable()
+                                       .frame(width: 23, height: 23)
+                                   Image("addFore")
+                                       .resizable()
+                                       .frame(width: 17, height: 17)
+                               }
+                            
                     }
                 }
                 .padding()
                 
+                Spacer()
                 // 나머지 UI 구성
                 Text("Assiment View for \(data.labelText)")
                 // 여기에 더 많은 UI 컴포넌트를 추가
+                Spacer()
             }
             .navigationBarHidden(true) // 기본 네비게이션 바 숨김
         }
