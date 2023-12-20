@@ -7,8 +7,13 @@
 
 import Foundation
 
-struct CategoryModel: Codable {
-    var id: Int
-    var title: String
+struct CategoryModel: Identifiable {
+    let id: UUID
+    let title: String
+
+    init(title: String) {
+        self.id = UUID() // 고유 식별자 생성
+        self.title = title
+    }
 }
 
