@@ -9,7 +9,7 @@ struct AssimentView: View {
     var data: GridItemModel
     @Environment(\.presentationMode) var presentationMode // 환경 변수 추가
     
-    @State private var items: [String] = ["항목 1", "항목 2"] // list item
+    @State private var items: [String] = [] // list item
     @State private var newItem: String = ""
     
     var body: some View {
@@ -25,12 +25,13 @@ struct AssimentView: View {
         }
     }
 
+
+//MARK: - Header 추가
+
     // Header View
     var headerView: some View {
         HStack {
           
-            
-            
             backButton
             HeadText
             Spacer()
@@ -83,21 +84,33 @@ struct AssimentView: View {
             }
         }
     }
+//MARK: -
 
     // List and New Item View
     var listAndNewItemView: some View {
-        VStack {
-            List {
-                ForEach(items, id: \.self) { item in
-                    Text(item)
+            VStack {
+                ScrollView {
+                    VStack(spacing: 10) { // 항목 사이의 여백 설정
+                        ForEach(items, id: \.self) { item in
+                            Text(item)
+                                .frame(height: 120) // 항목 높이 설정
+                                .frame(maxWidth: .infinity)
+                                .background(Color.red) // 항목 배경 색상
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(.horizontal) // 가로 여백 제거
                 }
+                .background(Color.green) // List 전체 배경색 설정
+
+                // 새 항목 추가 UI
+                TextField("새 항목", text: $newItem)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
             }
-            
-            TextField("새 항목", text: $newItem)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
+            .background(Color.green) // VStack 배경 색상
         }
-    }
+
 
     func addNewItem() {
         if !newItem.isEmpty {
