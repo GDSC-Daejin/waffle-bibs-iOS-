@@ -32,7 +32,6 @@ struct AssimentView: View {
             
             
             backButton
-            Spacer()
             HeadText
             Spacer()
             deleteButton
