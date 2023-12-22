@@ -3,6 +3,7 @@
 //  waffle-bibs
 //
 //  Created by 이지훈 on 2023/11/27.
+
 import SwiftUI
 
 struct AssimentView: View {
@@ -95,20 +96,20 @@ struct AssimentView: View {
                             Text(item)
                                 .frame(height: 120) // 항목 높이 설정
                                 .frame(maxWidth: .infinity)
-                                .background(Color.red) // 항목 배경 색상
+                                .background(Color("CustomBlue")) // 항목 배경 색상
                                 .cornerRadius(8)
                         }
                     }
                     .padding(.horizontal) // 가로 여백 제거
                 }
-                .background(Color.green) // List 전체 배경색 설정
+                .background(Color.white) // List 전체 배경색 설정
 
                 // 새 항목 추가 UI
                 TextField("새 항목", text: $newItem)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
             }
-            .background(Color.green) // VStack 배경 색상
+            .background(Color.white) // VStack 배경 색상
         }
 
 
