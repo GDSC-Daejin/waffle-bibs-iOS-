@@ -104,10 +104,6 @@ struct AssimentView: View {
                 }
                 .background(Color.white) // List 전체 배경색 설정
 
-                // 새 항목 추가 UI
-                TextField("새 항목", text: $newItem)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
             }
             .background(Color.white) // VStack 배경 색상
         }
