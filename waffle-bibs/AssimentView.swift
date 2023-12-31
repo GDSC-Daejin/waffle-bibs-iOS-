@@ -11,7 +11,7 @@ struct AssimentView: View {
     var data: GridItemModel
     @Environment(\.presentationMode) var presentationMode // 환경 변수 추가
     
-    @State private var items: [String] = [] // list item
+    @State private var items: [String] = Array(repeating: "", count: 8) // 8개의 비어 있는 항목으로 초기화
     @State private var newItem: String = ""
     @State private var showAlert = false
     @State private var showNewItemView = false
@@ -30,7 +30,7 @@ struct AssimentView: View {
             
             // 새 항목 뷰 추가
             if showNewItemView {
-                NewItemView(isPresented: $showNewItemView, items: $items)
+                NewItemView(isPresented: $showNewItemView, newItem: $newItem, items: $items)
                     .frame(maxWidth: 300, maxHeight: 200)
                     .background(Color.white)
                     .cornerRadius(12)
@@ -104,41 +104,43 @@ struct AssimentView: View {
     // List and New Item View
     var listAndNewItemView: some View {
         VStack {
+            TextField("새 항목", text: $newItem)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+            
             ScrollView {
-                VStack(spacing: 10) { // 항목 사이의 여백 설정
-                    ForEach(items, id: \.self) { item in
-                        Text(item)
-                            .frame(height: 120) // 항목 높이 설정
+                VStack(spacing: 10) {
+                    ForEach(0..<items.count, id: \.self) { index in
+                        Text(items[index].isEmpty ? "비어있는 항목" : items[index])
+                            .frame(height: 120)
                             .frame(maxWidth: .infinity)
-                            .background(Color("CustomBlue")) // 항목 배경 색상
+                            .background(Color("CustomBlue"))
                             .cornerRadius(8)
                     }
                 }
-                .padding(.horizontal) // 가로 여백 제거
+                .padding(.horizontal)
             }
-            .background(Color.white) // List 전체 배경색 설정
-            
+            .background(Color.white)
         }
-        .background(Color.white) // VStack 배경 색상
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text("새 항목 추가"),
-                message: Text("새 항목을 추가하시겠습니까?"),
-                primaryButton: .default(Text("확인")) {
-                    addButton
-                },
-                secondaryButton: .cancel()
-            )
+        .background(Color.white)
+    }
+    
+    func addNewItem() {
+        if !newItem.isEmpty {
+            if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
+                items[firstEmptyIndex] = newItem
+            }
+            newItem = "" // 입력 필드 초기화
         }
     }
-   
 }
+
 
 struct NewItemView: View {
     @Binding var isPresented: Bool
+    @Binding var newItem: String
     @Binding var items: [String]
-    @State private var newItem: String = ""
-
+    
     var body: some View {
         VStack {
             TextField("새 항목", text: $newItem)
