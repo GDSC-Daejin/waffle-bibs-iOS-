@@ -5,6 +5,7 @@
 //  Created by 이지훈 on 2023/11/27.
 
 import SwiftUI
+import Alamofire
 
 struct AssimentView: View {
     
@@ -31,7 +32,7 @@ struct AssimentView: View {
             // 새 항목 뷰 추가
             if showNewItemView {
                 NewItemView(isPresented: $showNewItemView, newItem: $newItem, items: $items)
-                    .frame(maxWidth: 300, maxHeight: 200)
+                    .frame(maxWidth: 300, maxHeight: 20)
                     .background(Color.white)
                     .cornerRadius(12)
                     .shadow(radius: 10)
@@ -50,7 +51,7 @@ struct AssimentView: View {
             backButton
             HeadText
             Spacer()
-            deleteButton
+          //  deleteButton
             addButton
         }
         .padding()
@@ -75,16 +76,16 @@ struct AssimentView: View {
         
     }
     
-    var deleteButton: some View {
-        Button(action: {
-            // 오른쪽 첫 번째 버튼 액션
-        }) {
-            Image("deleteBtn")
-                .resizable()
-                .frame(width: 30, height: 30)
-        }
-    }
-    
+//    var deleteButton: some View {
+//        Button(action: {
+//            // 오른쪽 첫 번째 버튼 액션
+//        }) {
+//            Image("deleteBtn")
+//                .resizable()
+//                .frame(width: 30, height: 30)
+//        }
+//    }
+//
     var addButton: some View {
         Button(action: {
             showNewItemView = true
@@ -111,7 +112,7 @@ struct AssimentView: View {
             ScrollView {
                 VStack(spacing: 10) {
                     ForEach(0..<items.count, id: \.self) { index in
-                        Text(items[index].isEmpty ? "비어있는 항목" : items[index])
+                        Text(items[index].isEmpty ? "" : items[index])
                             .frame(height: 120)
                             .frame(maxWidth: .infinity)
                             .background(Color("CustomBlue"))
@@ -126,13 +127,14 @@ struct AssimentView: View {
     }
     
     func addNewItem() {
-        if !newItem.isEmpty {
-            if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
-                items[firstEmptyIndex] = newItem
-            }
-            newItem = "" // 입력 필드 초기화
-        }
-    }
+           if !newItem.isEmpty {
+               // 첫 번째 빈 항목을 찾아서 새 항목으로 업데이트합니다.
+               if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
+                   items[firstEmptyIndex] = newItem
+                   newItem = "" // 입력 필드 초기화
+               }
+           }
+       }
 }
 
 
