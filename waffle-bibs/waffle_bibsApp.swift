@@ -9,8 +9,14 @@ import SwiftUI
 
 @main
 struct waffle_bibsApp: App {
+
+    init() {
+        Thread.sleep(forTimeInterval: 5)
+    }
+    
     var body: some Scene {
         WindowGroup {
+
             ContentView()
         }
     }
