@@ -33,21 +33,25 @@ struct AssimentView: View {
                                         editingIndex = nil
                                     }
                             } else {
-                                Text(items[index].isEmpty ? "비어있는 항목" : items[index])
+                                Text(items[index].isEmpty ? "" : items[index])
                             }
                         }
-                        .frame(height: 120)
+                        .frame(width: UIScreen.main.bounds.width - 40, height: 48)
                         .background(Color("CustomBlue"))
                         .cornerRadius(8)
+                        .listRowSeparator(.hidden)
                     }
                     .onDelete(perform: removeItem)
+                    
                 }
                 .listStyle(PlainListStyle())
+
             }
             .navigationBarHidden(true)
         }
     }
 
+    //MARK: - Header
 
     var headerView: some View {
         HStack {
