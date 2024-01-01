@@ -7,7 +7,9 @@
 import SwiftUI
 import Alamofire
 struct AssimentView: View {
+    
     var data: GridItemModel
+    
     @Environment(\.presentationMode) var presentationMode
     
     @State private var items: [String] = Array(repeating: "", count: 8)
@@ -15,44 +17,37 @@ struct AssimentView: View {
     @State private var newItem: String = ""
     
     
+    
+    
     var body: some View {
-          ZStack {
-              VStack(alignment: .leading) {
-                  headerView
-                  ScrollView {
-                      VStack(spacing: 10) {
-                          ForEach(0..<items.count, id: \.self) { index in
-                              ZStack {
-                                  if editingIndex == index {
-                                      TextField("새 항목", text: $items[index])
-                                          .textFieldStyle(RoundedBorderTextFieldStyle())
-                                          .onSubmit {
-                                              editingIndex = nil
-                                          }
-                                  } else {
-                                      Text(items[index].isEmpty ? "비어있는 항목" : items[index])
-                                  }
-                              }
-                              .frame(height: 120)
-                              .frame(maxWidth: .infinity)
-                              .background(Color("CustomBlue"))
-                              .cornerRadius(8)
-                              .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                  Button(role: .destructive) {
-                                      removeItem(at: index)
-                                  } label: {
-                                      Label("삭제", systemImage: "trash")
-                                  }
-                              }
-                          }
-                      }
-                      .padding(.horizontal)
-                  }
-                  .background(Color.white)
-              }
-              .navigationBarHidden(true)
-          }
-      }
+        ZStack {
+            VStack(alignment: .leading) {
+                headerView
+                List {
+                    ForEach(0..<items.count, id: \.self) { index in
+                        ZStack {
+                            if editingIndex == index {
+                                TextField("새 항목", text: $items[index])
+                                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                                    .onSubmit {
+                                        editingIndex = nil
+                                    }
+                            } else {
+                                Text(items[index].isEmpty ? "비어있는 항목" : items[index])
+                            }
+                        }
+                        .frame(height: 120)
+                        .background(Color("CustomBlue"))
+                        .cornerRadius(8)
+                    }
+                    .onDelete(perform: removeItem)
+                }
+                .listStyle(PlainListStyle())
+            }
+            .navigationBarHidden(true)
+        }
+    }
+
 
     var headerView: some View {
         HStack {
@@ -95,9 +90,9 @@ struct AssimentView: View {
     //MARK: -
 
     
-    func removeItem(at index: Int) {
-        items.remove(at: index)
-        items.append("") // 맨 끝에 새로운 빈 항목 추가
+    func removeItem(at offsets: IndexSet) {
+        items.remove(atOffsets: offsets)
+        items.append("")
     }
 
     func addNewItem() {
