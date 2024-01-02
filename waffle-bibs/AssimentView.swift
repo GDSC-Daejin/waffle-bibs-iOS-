@@ -7,8 +7,6 @@
 import SwiftUI
 import Alamofire
 
-
-
 struct AssimentView: View {
     
     var data: GridItemModel
@@ -18,8 +16,7 @@ struct AssimentView: View {
     @State private var items: [String] = Array(repeating: "", count: 8)
     @State private var editingIndex: Int? = nil
     @State private var newItem: String = ""
-    
-    
+    @FocusState private var isFocused: Bool
     
     
     var body: some View {
@@ -37,6 +34,7 @@ struct AssimentView: View {
                                     .onSubmit {
                                         editingIndex = nil
                                     }
+                                    .focused($isFocused)
                             } else {
                                 Text(items[index].isEmpty ? "" : items[index])
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -57,6 +55,8 @@ struct AssimentView: View {
             .navigationBarHidden(true)
         }
     }
+
+
 
     //MARK: - Header
 
@@ -89,6 +89,7 @@ struct AssimentView: View {
         Button(action: {
             if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
                 editingIndex = firstEmptyIndex
+                isFocused = true // 포커스 상태를 true로 설정
             }
         }) {
             ZStack {
@@ -148,10 +149,13 @@ struct AssimentView: View {
     
 
 
+
 struct AssimentView_Previews: PreviewProvider {
     static var previews: some View {
         AssimentView(data: GridItemModel(imageName: "assiment", labelText: "Assignment"))
+        // Removed the isFocused parameter
     }
+    
 }
 
 extension Color {
