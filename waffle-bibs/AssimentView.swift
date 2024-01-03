@@ -102,11 +102,33 @@ struct AssimentView: View {
     
     //MARK: -
     
-    
     func removeItem(at offsets: IndexSet) {
+        // Loop through the indices that are being removed.
+        for index in offsets {
+            // For demonstration purposes, using the index as an ID.
+            // Replace with actual ID obtained from the server.
+            let id = index // Replace this with the actual ID.
+
+            // Alamofire DELETE request
+            let url = "https://waffle-bibs.p-e.kr:443/todo/\(id)"
+            AF.request(url, method: .delete).response { response in
+                switch response.result {
+                case .success:
+                    print("DELETE 요청 성공")
+                    print(id)
+                case .failure(let error):
+                    print("DELETE 요청 실패: \(error)")
+                }
+            }
+        }
+
+        // Remove items from the local list after the DELETE request.
         items.remove(atOffsets: offsets)
+        // You might need to fetch the updated list from the server after this.
+        // Append an empty item if needed.
         items.append("")
     }
+
     
     
     func addNewItem() {
