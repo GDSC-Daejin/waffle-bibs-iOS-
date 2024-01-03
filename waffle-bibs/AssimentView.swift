@@ -32,6 +32,7 @@ struct AssimentView: View {
                                     .padding(.leading, 20)
                                     .background(Color.clear)
                                     .onSubmit {
+                                        submitItem(at: index)
                                         editingIndex = nil
                                     }
                                     .focused($isFocused)
@@ -50,16 +51,16 @@ struct AssimentView: View {
                     
                 }
                 .listStyle(PlainListStyle())
-
+                
             }
             .navigationBarHidden(true)
         }
     }
-
-
-
+    
+    
+    
     //MARK: - Header
-
+    
     var headerView: some View {
         HStack {
             backButton
@@ -69,7 +70,7 @@ struct AssimentView: View {
         }
         .padding()
     }
-
+    
     var backButton: some View {
         Button(action: {
             self.presentationMode.wrappedValue.dismiss()
@@ -87,9 +88,17 @@ struct AssimentView: View {
     
     var addButton: some View {
         Button(action: {
+            // Determine the first empty index when the button is clicked
             if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
                 editingIndex = firstEmptyIndex
-                isFocused = true // 포커스 상태를 true로 설정
+                isFocused = true
+                
+                // Create the TodoItem and Post it
+                let dateFormatter = ISO8601DateFormatter()
+                let currentTime = dateFormatter.string(from: Date())
+                
+                let todoItem = TodoItem(categoryTitle: "assignment", completeChk: true, contents: items[firstEmptyIndex], startTime: currentTime)
+                postTodoItem(item: todoItem)
             }
         }) {
             ZStack {
@@ -100,54 +109,72 @@ struct AssimentView: View {
     }
     
     //MARK: -
-
+    
     
     func removeItem(at offsets: IndexSet) {
         items.remove(atOffsets: offsets)
         items.append("")
     }
-
-  
+    
+    
     func addNewItem() {
         if !newItem.isEmpty {
             if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
                 items[firstEmptyIndex] = newItem
                 newItem = ""
-
-                // 현재 시간을 ISO 8601 형식으로 변환
-                let dateFormatter = ISO8601DateFormatter()
-                let currentTime = dateFormatter.string(from: Date())
-
-                // Alamofire를 사용한 POST 요청
-                let url = "https://waffle-bibs.p-e.kr:443/1/todo/add"
-                let headers: HTTPHeaders = [
-                    "accept": "*/*",
-                    "Content-Type": "application/json"
-                ]
-                let parameters: [String: Any] = [
-                 //   "categoryTitle": "string",  // 예시 값
-                 //   "complete_chk": true,       // 예시 값
-                    "contents": items[firstEmptyIndex], // 텍스트 필드의 값
-                  //  "id": 1,                    // 예시 값
-                  //  "startTime": currentTime,   // 현재 시간
-                 // "title": "string"           // 예시 값
-                ]
-
-                AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { response in
-                    switch response.result {
-                    case .success:
-                        print("POST 요청 성공")
-                    case .failure(let error):
-                        print("POST 요청 실패: \(error)")
-                    }
-                }
+                
+                
             }
         }
+        
     }
-
-}
     
+    func postTodoItem(item: TodoItem) {
+        let url = "https://waffle-bibs.p-e.kr:443/1/todo/add"
+        let headers: HTTPHeaders = [
+            "accept": "*/*",
+            "Content-Type": "application/json"
+        ]
+        
+        // Convert your TodoItem to a dictionary for Alamofire
+        guard let parameters = try? item.asDictionary() else { return }
+        
+        AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { response in
+            switch response.result {
+            case .success:
+                print("POST 요청 성공")
+                print(url)
+                debugPrint(Parameters.self)
+                print("----")
+            case .failure(let error):
+                print("POST 요청 실패: \(error)")
+            }
+        }
+        
+    }
+    
+    func submitItem(at index: Int) {
+           if !items[index].isEmpty {
+               let dateFormatter = ISO8601DateFormatter()
+               let currentTime = dateFormatter.string(from: Date())
 
+               let todoItem = TodoItem(categoryTitle: "assignment", completeChk: true, contents: items[index], startTime: currentTime)
+               postTodoItem(item: todoItem)
+           }
+       }
+    
+}
+
+// Helper extension to convert Codable to Dictionary
+extension Encodable {
+    func asDictionary() throws -> [String: Any] {
+        let data = try JSONEncoder().encode(self)
+        guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) as? [String: Any] else {
+            throw NSError()
+        }
+        return dictionary
+    }
+}
 
 
 struct AssimentView_Previews: PreviewProvider {

@@ -8,17 +8,9 @@
 import Foundation
 
 
-// MARK: - Welcome
-struct TodoPostModel: Codable {
-    let categoryTitle: String?
-    let completeChk: Bool?
-    let contents: String?
-    let id: Int?
-    let startTime, title: String?
-
-    enum CodingKeys: String, CodingKey {
-        case categoryTitle
-        case completeChk = "complete_chk"
-        case contents, id, startTime, title
-    }
+struct TodoItem: Codable {
+    let categoryTitle: String
+    let completeChk: Bool
+    let contents: String
+    let startTime: String
 }
