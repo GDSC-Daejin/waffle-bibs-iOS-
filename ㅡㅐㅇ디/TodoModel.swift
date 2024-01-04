@@ -14,3 +14,10 @@ struct TodoItem: Codable {
     let contents: String
     let startTime: String
 }
+
+struct TodoItemGet: Decodable {
+    let id: Int
+    let contents: String?
+    let completeChk: Bool? 
+    let categoryTitle: String
+}

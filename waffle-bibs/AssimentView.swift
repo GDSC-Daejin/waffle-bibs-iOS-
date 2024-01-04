@@ -16,6 +16,7 @@ struct AssimentView: View {
     @State private var items: [String] = Array(repeating: "", count: 8)
     @State private var editingIndex: Int? = nil
     @State private var newItem: String = ""
+    @State private var todoItems: [TodoItemGet] = []
     @FocusState private var isFocused: Bool
     
     
@@ -24,40 +25,29 @@ struct AssimentView: View {
             VStack(alignment: .leading) {
                 headerView
                 List {
-                    ForEach(0..<items.count, id: \.self) { index in
+                    ForEach(todoItems, id: \.id) { item in
                         ZStack {
-                            if editingIndex == index {
-                                TextField("", text: $items[index])
-                                    .textFieldStyle(DefaultTextFieldStyle())
-                                    .padding(.leading, 20)
-                                    .background(Color.clear)
-                                    .onSubmit {
-                                        submitItem(at: index)
-                                        editingIndex = nil
-                                    }
-                                    .focused($isFocused)
-                            } else {
-                                Text(items[index].isEmpty ? "" : items[index])
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading, 20)
-                            }
+                            TextField("", text: Binding(
+                                get: { item.contents ?? "" },
+                                set: { _ in }
+                            ))
+                            .textFieldStyle(DefaultTextFieldStyle())
+                            .padding(.leading, 20)
+                            .background(Color.clear)
+                            .frame(width: UIScreen.main.bounds.width - 40, height: 48)
+                            .background(Color("CustomBlue"))
+                            .cornerRadius(8)
+                            .listRowSeparator(.hidden)
                         }
-                        .frame(width: UIScreen.main.bounds.width - 40, height: 48)
-                        .background(Color("CustomBlue"))
-                        .cornerRadius(8)
-                        .listRowSeparator(.hidden)
                     }
                     .onDelete(perform: removeItem)
-                    
                 }
                 .listStyle(PlainListStyle())
-                
+                .onAppear(perform: fetchTodoItems)
             }
             .navigationBarHidden(true)
         }
     }
-    
-    
     
     //MARK: - Header
     
@@ -102,13 +92,31 @@ struct AssimentView: View {
     
     //MARK: -
     
+    func fetchTodoItems() {
+        let url = "https://waffle-bibs.p-e.kr:443/1/todo"
+        AF.request(url, method: .get).responseDecodable(of: [TodoItemGet].self) { [self] response in
+            switch response.result {
+            case .success(let items):
+                self.todoItems = Array(items.sorted { $0.id > $1.id }.prefix(8))
+                self.items = self.todoItems.map { $0.contents ?? "" }    // items 배열 업데이트
+                
+            case .failure(let error):
+                print("Error fetching todo items: \(error)")
+            }
+        }
+    }
+
+    
+    
+    
+    
     func removeItem(at offsets: IndexSet) {
         // Loop through the indices that are being removed.
         for index in offsets {
             // For demonstration purposes, using the index as an ID.
             // Replace with actual ID obtained from the server.
             let id = index // Replace this with the actual ID.
-
+            
             // Alamofire DELETE request
             let url = "https://waffle-bibs.p-e.kr:443/todo/\(id)"
             AF.request(url, method: .delete).response { response in
@@ -121,14 +129,14 @@ struct AssimentView: View {
                 }
             }
         }
-
+        
         // Remove items from the local list after the DELETE request.
         items.remove(atOffsets: offsets)
         // You might need to fetch the updated list from the server after this.
         // Append an empty item if needed.
         items.append("")
     }
-
+    
     
     
     func addNewItem() {
@@ -142,6 +150,7 @@ struct AssimentView: View {
         }
         
     }
+    
     func submitItem(at index: Int) {
         if !items[index].isEmpty {
             let dateFormatter = ISO8601DateFormatter()
