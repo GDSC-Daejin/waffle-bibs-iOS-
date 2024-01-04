@@ -25,23 +25,35 @@ struct AssimentView: View {
             VStack(alignment: .leading) {
                 headerView
                 List {
-                    ForEach(todoItems, id: \.id) { item in
+                    ForEach(todoItems.indices, id: \.self) { index in
                         ZStack {
-                            TextField("", text: Binding(
-                                get: { item.contents ?? "" },
-                                set: { _ in }
-                            ))
-                            .textFieldStyle(DefaultTextFieldStyle())
-                            .padding(.leading, 20)
-                            .background(Color.clear)
-                            .frame(width: UIScreen.main.bounds.width - 40, height: 48)
-                            .background(Color("CustomBlue"))
-                            .cornerRadius(8)
-                            .listRowSeparator(.hidden)
+                            // Check if this is the currently editing item
+                            if let editingIndex = self.editingIndex, editingIndex == index {
+                                         TextField("", text: $items[editingIndex])
+                                    .textFieldStyle(DefaultTextFieldStyle())
+                                    .padding(.leading, 20)
+                                    .background(Color.clear)
+                                    .onSubmit {
+                                        submitItem(at: editingIndex)
+                                        self.editingIndex = nil
+                                    }
+                                    .focused($isFocused)
+                            } else {
+                                Text(todoItems[index].contents ?? "")
+                                               .frame(maxWidth: .infinity, alignment: .leading)
+                                               .padding(.leading, 20)
+                                       }
                         }
+                        .frame(width: UIScreen.main.bounds.width - 40, height: 48)
+                        .background(Color("CustomBlue"))
+                        .cornerRadius(8)
+                        .listRowSeparator(.hidden)
                     }
                     .onDelete(perform: removeItem)
+
+
                 }
+
                 .listStyle(PlainListStyle())
                 .onAppear(perform: fetchTodoItems)
             }
@@ -94,17 +106,19 @@ struct AssimentView: View {
     
     func fetchTodoItems() {
         let url = "https://waffle-bibs.p-e.kr:443/1/todo"
-        AF.request(url, method: .get).responseDecodable(of: [TodoItemGet].self) { [self] response in
+        AF.request(url, method: .get).responseDecodable(of: [TodoItemGet].self) { response in
             switch response.result {
             case .success(let items):
-                self.todoItems = Array(items.sorted { $0.id > $1.id }.prefix(8))
-                self.items = self.todoItems.map { $0.contents ?? "" }    // items 배열 업데이트
-                
+                DispatchQueue.main.async {  // Ensure UI updates on the main thread
+                    self.todoItems = items.sorted { $0.id > $1.id }.prefix(8).map { $0 }  // No need to convert to Array
+                    self.items = self.todoItems.map { $0.contents ?? "" }
+                }
             case .failure(let error):
                 print("Error fetching todo items: \(error)")
             }
         }
     }
+
 
     
     
@@ -153,33 +167,18 @@ struct AssimentView: View {
     
     func submitItem(at index: Int) {
         if !items[index].isEmpty {
-            let dateFormatter = ISO8601DateFormatter()
-            let currentTime = dateFormatter.string(from: Date())
-            
-            let parameters: [String: Any] = [
-                "complete_chk": true,
-                "contents": items[index]
-            ]
-            
-            let url = "https://waffle-bibs.p-e.kr:443/1/todo/add"
-            let headers: HTTPHeaders = [
-                "accept": "*/*",
-                "Content-Type": "application/json"
-            ]
-            
-            AF.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers).response { response in
-                switch response.result {
+            NetworkManager.shared.postTodoItem(contents: items[index]) { result in
+                switch result {
                 case .success:
-                    print("POST 요청 성공")
-                    print("--")
+                    print("Todo item post 성공!")
+                    // 필요한 작업 수행
                 case .failure(let error):
-                    print("POST 요청 실패: \(error)")
+                    print("Todo item post 실패: \(error)")
                 }
             }
         }
-        
     }
-    
+
 }
 
 extension Encodable {
