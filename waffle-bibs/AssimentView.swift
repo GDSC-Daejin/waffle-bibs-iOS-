@@ -50,12 +50,10 @@ struct AssimentView: View {
                         .listRowSeparator(.hidden)
                     }
                     .onDelete(perform: removeItem)
-
-
                 }
-
                 .listStyle(PlainListStyle())
                 .onAppear(perform: fetchTodoItems)
+                .animation(.easeInOut(duration: 0.3)) 
             }
             .navigationBarHidden(true)
         }
@@ -90,10 +88,11 @@ struct AssimentView: View {
     
     var addButton: some View {
         Button(action: {
-            if let firstEmptyIndex = items.firstIndex(where: { $0.isEmpty }) {
-                editingIndex = firstEmptyIndex
-                isFocused = true
-            }
+            // Add new empty item at the end
+            self.items.append("")
+            self.todoItems.append(TodoItemGet(id: -1, contents: "", completeChk: true, categoryTitle: ""))
+            self.editingIndex = self.items.count - 1
+            self.isFocused = true
         }) {
             ZStack {
                 Image("addBack").resizable().frame(width: 23, height: 23)
@@ -119,39 +118,29 @@ struct AssimentView: View {
         }
     }
 
-
-    
-    
-    
-    
     func removeItem(at offsets: IndexSet) {
-        // Loop through the indices that are being removed.
-        for index in offsets {
-            // For demonstration purposes, using the index as an ID.
-            // Replace with actual ID obtained from the server.
-            let id = index // Replace this with the actual ID.
+        for offset in offsets {
+            let id = todoItems[offset].id
             
-            // Alamofire DELETE request
             let url = "https://waffle-bibs.p-e.kr:443/todo/\(id)"
             AF.request(url, method: .delete).response { response in
                 switch response.result {
                 case .success:
                     print("DELETE 요청 성공")
+                    DispatchQueue.main.async {
+                        self.todoItems.remove(at: offset)
+                        self.items.remove(at: offset)
+                        self.fetchTodoItems()  // Fetch the updated list to refill the gap
+                        
+                    }
                     print(id)
                 case .failure(let error):
                     print("DELETE 요청 실패: \(error)")
                 }
             }
         }
-        
-        // Remove items from the local list after the DELETE request.
-        items.remove(atOffsets: offsets)
-        // You might need to fetch the updated list from the server after this.
-        // Append an empty item if needed.
-        items.append("")
     }
-    
-    
+
     
     func addNewItem() {
         if !newItem.isEmpty {
@@ -171,7 +160,10 @@ struct AssimentView: View {
                 switch result {
                 case .success:
                     print("Todo item post 성공!")
-                    // 필요한 작업 수행
+                    // Fetch updated list after posting
+                    DispatchQueue.main.async {
+                        fetchTodoItems()
+                    }
                 case .failure(let error):
                     print("Todo item post 실패: \(error)")
                 }
