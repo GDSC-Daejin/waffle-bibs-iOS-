@@ -17,7 +17,7 @@ struct TodoItem: Codable {
 
 struct TodoItemGet: Decodable {
     let id: Int
-    let contents: String?
+    var contents: String?
     let completeChk: Bool? 
     let categoryTitle: String
 }

@@ -27,22 +27,27 @@ struct AssimentView: View {
                 List {
                     ForEach(todoItems.indices, id: \.self) { index in
                         ZStack {
-                            // Check if this is the currently editing item
-                            if let editingIndex = self.editingIndex, editingIndex == index {
-                                         TextField("", text: $items[editingIndex])
-                                    .textFieldStyle(DefaultTextFieldStyle())
-                                    .padding(.leading, 20)
-                                    .background(Color.clear)
-                                    .onSubmit {
-                                        submitItem(at: editingIndex)
-                                        self.editingIndex = nil
-                                    }
-                                    .focused($isFocused)
+                            if editingIndex == index {
+                                TextField("", text: Binding(
+                                    get: { self.todoItems[index].contents ?? "" },
+                                    set: { self.todoItems[index].contents = $0 }
+                                ))
+                                .textFieldStyle(DefaultTextFieldStyle())
+                                .padding(.leading, 20)
+                                .background(Color.clear)
+                                .onSubmit {
+                                    updateTodoItem(at: index)
+                                    editingIndex = nil
+                                }
+                                .focused($isFocused)
                             } else {
                                 Text(todoItems[index].contents ?? "")
-                                               .frame(maxWidth: .infinity, alignment: .leading)
-                                               .padding(.leading, 20)
-                                       }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading, 20)
+                                    .onTapGesture {
+                                        editingIndex = index
+                                    }
+                            }
                         }
                         .frame(width: UIScreen.main.bounds.width - 40, height: 48)
                         .background(Color("CustomBlue"))
@@ -53,11 +58,12 @@ struct AssimentView: View {
                 }
                 .listStyle(PlainListStyle())
                 .onAppear(perform: fetchTodoItems)
-                .animation(.easeInOut(duration: 0.3)) 
+                .animation(.easeInOut(duration: 0.3))
             }
             .navigationBarHidden(true)
         }
     }
+
     
     //MARK: - Header
     
@@ -170,7 +176,29 @@ struct AssimentView: View {
             }
         }
     }
+    
+    func updateTodoItem(at index: Int) {
+           
+         let id = todoItems[index].id
+           guard let contents = todoItems[index].contents else { return }
 
+           let parameters: [String: Any] = ["complete_chk": true, "contents": contents]
+           let url = "https://waffle-bibs.p-e.kr:443/todo/\(id)/update"
+
+            AF.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: ["Content-Type": "application/json"]).response { response in
+                switch response.result {
+                case .success:
+                    print("PATCH 요청 성공")
+
+                    DispatchQueue.main.async {
+                        fetchTodoItems()
+                    }
+                case .failure(let error):
+                    print("PATCH 요청 실패: \(error)")
+                }
+            }
+        }
+    
 }
 
 extension Encodable {
