@@ -48,6 +48,17 @@ struct AssimentView: View {
                                         editingIndex = index
                                     }
                             }
+                            
+//                            if let editingIndex = editingIndex {
+//                                Color.black.opacity(0.3)
+//                                    .ignoresSafeArea()
+//                                    .onTapGesture {
+//                                        // Dismiss the keyboard and editing mode
+//                                        self.editingIndex = nil
+//                                        hideKeyboard()
+//                                    }
+//                            }
+                            
                         }
                         .frame(width: UIScreen.main.bounds.width - 40, height: 48)
                         .background(Color("CustomBlue"))
@@ -63,7 +74,7 @@ struct AssimentView: View {
             .navigationBarHidden(true)
         }
     }
-
+    
     
     //MARK: - Header
     
@@ -123,7 +134,7 @@ struct AssimentView: View {
             }
         }
     }
-
+    
     func removeItem(at offsets: IndexSet) {
         for offset in offsets {
             let id = todoItems[offset].id
@@ -146,7 +157,7 @@ struct AssimentView: View {
             }
         }
     }
-
+    
     
     func addNewItem() {
         if !newItem.isEmpty {
@@ -162,42 +173,54 @@ struct AssimentView: View {
     
     func submitItem(at index: Int) {
         if !items[index].isEmpty {
-            NetworkManager.shared.postTodoItem(contents: items[index]) { result in
-                switch result {
-                case .success:
-                    print("Todo item post 성공!")
-                    // Fetch updated list after posting
-                    DispatchQueue.main.async {
-                        fetchTodoItems()
+            if todoItems[index].id == -1 {  // Check if it's a new item
+                // It's a new item, so post it
+                NetworkManager.shared.postTodoItem(contents: items[index]) { result in
+                    switch result {
+                    case .success:
+                        print("Todo item post 성공!")
+                        // Fetch updated list after posting
+                        DispatchQueue.main.async {
+                            fetchTodoItems()
+                        }
+                    case .failure(let error):
+                        print("Todo item post 실패: \(error)")
                     }
-                case .failure(let error):
-                    print("Todo item post 실패: \(error)")
                 }
+            } else {
+                // It's an existing item, so update it
+                updateTodoItem(at: index)
+            }
+        }
+    }
+
+    
+    func updateTodoItem(at index: Int) {
+        
+        let id = todoItems[index].id
+        guard let contents = todoItems[index].contents else { return }
+        
+        let parameters: [String: Any] = ["complete_chk": true, "contents": contents]
+        let url = "https://waffle-bibs.p-e.kr:443/todo/\(id)/update"
+        
+        AF.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: ["Content-Type": "application/json"]).response { response in
+            switch response.result {
+            case .success:
+                print("PATCH 요청 성공")
+                
+                DispatchQueue.main.async {
+                    fetchTodoItems()
+                }
+            case .failure(let error):
+                print("PATCH 요청 실패: \(error)")
             }
         }
     }
     
-    func updateTodoItem(at index: Int) {
-           
-         let id = todoItems[index].id
-           guard let contents = todoItems[index].contents else { return }
-
-           let parameters: [String: Any] = ["complete_chk": true, "contents": contents]
-           let url = "https://waffle-bibs.p-e.kr:443/todo/\(id)/update"
-
-            AF.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: ["Content-Type": "application/json"]).response { response in
-                switch response.result {
-                case .success:
-                    print("PATCH 요청 성공")
-
-                    DispatchQueue.main.async {
-                        fetchTodoItems()
-                    }
-                case .failure(let error):
-                    print("PATCH 요청 실패: \(error)")
-                }
-            }
-        }
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+    
     
 }
 
